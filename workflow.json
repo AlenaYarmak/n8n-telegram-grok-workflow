@@ -1,0 +1,203 @@
+{
+  "name": "telegram-grok-ai",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "51f79695-1fd1-44a4-beb2-1164beaf0cde",
+      "name": "Telegram Trigger",
+      "webhookId": "1a15b373-3f45-4ac1-b7c7-9d1749d737e8",
+      "credentials": {
+        "telegramApi": {
+          "id": "FGxkcPdERqs29Rl5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=- Message:  {{ $json.message.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a helpful assistant for an online store that sells 3D-printed items (like accessories, gifts, home decor, or custom parts).\n\n- Answer politely and clearly.\n- Keep replies under 100 words.\n- Focus on assisting with product questions, customization options, pricing, or delivery.\n- If the message is unclear, ask a short, polite follow-up question.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "df1909d9-254c-4d77-aa3a-fad111c68853",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "grok-3",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatXAiGrok",
+      "typeVersion": 1,
+      "position": [
+        140,
+        220
+      ],
+      "id": "15822608-032d-4c4c-8748-19f76b85af8f",
+      "name": "xAI Grok Chat Model",
+      "notesInFlow": false,
+      "credentials": {
+        "xAiApi": {
+          "id": "BQB3ranN5Gp0Qvbr",
+          "name": "xAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        300,
+        220
+      ],
+      "id": "f93e2e57-78cd-4c40-97cb-b36d56e220e4",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        580,
+        0
+      ],
+      "id": "71ec470e-6a0d-407b-9713-b07a6d7fbf6b",
+      "name": "Telegram",
+      "webhookId": "2027a6a7-8297-4b4a-a3ad-a24b459c1953",
+      "credentials": {
+        "telegramApi": {
+          "id": "FGxkcPdERqs29Rl5",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Telegram": [
+      {
+        "json": {
+          "ok": true,
+          "result": {
+            "message_id": 53,
+            "from": {
+              "id": 7567516520,
+              "is_bot": true,
+              "first_name": "AICustomerBot",
+              "username": "AI_Customer_Help_bot"
+            },
+            "chat": {
+              "id": 7895030460,
+              "first_name": "Helen",
+              "type": "private"
+            },
+            "date": 1753204276,
+            "text": "Hi! I’m assuming you meant \"cookie cutter.\" We do offer a variety of 3D-printed cookie cutters in different shapes and designs. You can browse our catalog on the website to see available options. If you’re looking for a custom design, we can help with that too! Let me know your preferred shape or theme, and I’ll provide details on pricing and delivery. Is there a specific design you have in mind?\n\nThis message was sent automatically with n8n",
+            "entities": [
+              {
+                "offset": 401,
+                "length": 41,
+                "type": "italic"
+              },
+              {
+                "offset": 442,
+                "length": 3,
+                "type": "text_link",
+                "url": "https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.telegram_b2f5b6feec3bb5bd3a9e8cdbe221f4bac1e0138550a80f124111202294b13e77"
+              }
+            ],
+            "link_preview_options": {
+              "is_disabled": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "xAI Grok Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3fcc77cb-f230-48a2-8eba-c3677dd4b3a7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b2f5b6feec3bb5bd3a9e8cdbe221f4bac1e0138550a80f124111202294b13e77"
+  },
+  "id": "ZjsQcMGvl5cTe18C",
+  "tags": []
+}
