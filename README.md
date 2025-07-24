@@ -13,6 +13,26 @@ This n8n workflow connects a **Telegram Bot** with **Grok API** to create a simp
 
 ---
 
+## 🔧 Telegram Bot Setup
+
+1. Create a Telegram bot using @BotFather
+
+2. Copy the token and add it in n8n under Credentials → Telegram Bot API
+
+3. In the Telegram node, choose your bot credentials and set the chat ID
+
+---
+
+## 🔧 Grok API Setup
+
+1. Sign up at [https://x.ai/api]
+
+2. Get your API key/token from the dashboard
+
+3. In the xAI Grok Chat Model node fill your grok credential.
+
+---
+
 ## 🔄 Workflow Steps
 
 1. **Telegram Trigger**
